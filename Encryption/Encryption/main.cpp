@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 	string path = argv[1];//入力ファイルパス
 	vector<BYTE> data;  //ファイルデータ
 	UINT size;          //ファイルサイズ
-	int rad;
+	int rad = 0x3434;
 
 	{//ファイルの読み込み
 		setlocale(LC_ALL, "japanese");//ロケール設定
@@ -44,25 +44,28 @@ int main(int argc, char *argv[]) {
 	}
 
 	{//暗号化
-		srand(size);//乱数初期化
-		rad = rand();
 		for (UINT i = 0; i < size; i++) {//全データループ
 			data[i] = (data[i] ^ rad);//排他的論理和を取る
-		}
-	}
-
-	//解読
-	{
-		for (UINT i = 0; i < size; i++) {//全データループ
-			data[i] = (data[i] ^ rad);//排他的論理和を取る
+			data[i] = ~data[i];
+			if (i % 3 == 0)
+			{
+				data[i] = (data[i] ^ rad);
+			}
+			data[i] = (data[i] ^ rad);
 		}
 	}
 
 	{//保存
 		string outstr = path;
+		outstr.erase(outstr.end() - 2, outstr.end());
+		outstr.append("yn");
 		ofstream fout(outstr.c_str(), ios::binary);
 		fout.write((char*)&data[0], size);
+		fout.close();
 	}
+
+	printf("暗号化完了");
+	getchar();
 
 	return 0;
 
