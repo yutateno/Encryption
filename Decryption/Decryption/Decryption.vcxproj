@@ -149,13 +149,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Basic.cpp" />
     <ClCompile Include="Draw.cpp" />
-    <ClCompile Include="Load.cpp" />
+    <ClCompile Include="LoadMainThread.cpp" />
+    <ClCompile Include="LoadThread.cpp" />
+    <ClCompile Include="MediaLoad.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Basic.hpp" />
     <ClInclude Include="Draw.hpp" />
-    <ClInclude Include="Load.hpp" />
+    <ClInclude Include="LoadMainThread.hpp" />
+    <ClInclude Include="LoadThread.hpp" />
+    <ClInclude Include="MediaLoad.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

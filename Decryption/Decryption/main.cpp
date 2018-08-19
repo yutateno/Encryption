@@ -1,148 +1,80 @@
-//インクルード
-#include "DxLib.h"
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <thread>
-#include <mutex>
-#include <vector>
+#include "Draw.hpp"
+#include "LoadThread.hpp"
+#include "LoadMainThread.hpp"
 
-using namespace std;
-
-//typedef宣言
-typedef unsigned char BYTE;
-typedef unsigned int UINT;
-
-std::mutex mtx;
-
-//ファイルサイズを返す
-UINT file_size(ifstream &fin);
-
-void MyLoadGraph(string path, int& name);
-
-void Main_Thread(int draw);
-
-bool flag = false;
-int endNum = 0;
-int max = 6;
-
-//メイン関数
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	ChangeWindowMode(TRUE);					// ウィンドウにする
+	ChangeWindowMode(TRUE);				// ウィンドウにする
 	SetGraphMode(640, 480, 32);			// 画面サイズを決める
 
 	DxLib_Init();						// 初期化処理
 
 	SetDrawScreen(DX_SCREEN_BACK);		// 裏描画
 
-	setlocale(LC_ALL, "japanese");//ロケール設定
+	setlocale(LC_ALL, "japanese");		// ロケール設定
+	
+	LoadThread* loadThread = new LoadThread();					// 非同期で行うロード処理
+	LoadMainThread* loadMainThread = new LoadMainThread();		// 非同期でメインで行うロード画面のようなものの処理
 
-	int drawFile[6];
+	Draw* draw = NULL;			// ロード後にロードしたファイルを渡す先
 
-	int draw = LoadGraph("Media.jpg");
+	const int max = 10;		// ロードする個数
 
-	std::vector<std::thread>ths(6);
-	std::thread main_thre;
+	std::string str[max];		// ロードするファイルの名前
+	str[0] = "1.jyn";
+	str[1] = "2.jyn";
+	str[2] = "3.jyn";
+	str[3] = "4.jyn";
+	str[4] = "5.jyn";
+	str[5] = "6.jyn";
+	str[6] = "1.jyn";
+	str[7] = "2.jyn";
+	str[8] = "3.jyn";
+	str[9] = "4.jyn";
 
-	ths[0] = std::thread(MyLoadGraph, "1.jyn", std::ref(drawFile[0]));
-	ths[1] = std::thread(MyLoadGraph, "2.jyn", std::ref(drawFile[1]));
-	ths[2] = std::thread(MyLoadGraph, "3.jyn", std::ref(drawFile[2]));
-	ths[3] = std::thread(MyLoadGraph, "4.jyn", std::ref(drawFile[3]));
-	ths[4] = std::thread(MyLoadGraph, "5.jyn", std::ref(drawFile[4]));
-	ths[5] = std::thread(MyLoadGraph, "6.jyn", std::ref(drawFile[5]));
-	main_thre = std::thread(Main_Thread, draw);
+	ELOADFILE type[max];		// ロードするファイルの形式
+	type[0] = ELOADFILE::graph;
+	type[1] = ELOADFILE::graph;
+	type[2] = ELOADFILE::graph;
+	type[3] = ELOADFILE::graph;
+	type[4] = ELOADFILE::graph;
+	type[5] = ELOADFILE::graph;
+	type[6] = ELOADFILE::graph;
+	type[7] = ELOADFILE::graph;
+	type[8] = ELOADFILE::graph;
+	type[9] = ELOADFILE::graph;
+
+	int flag = 0;			// シーン移動を簡略的に行うための変数
+	bool threadEndFlag = false;
 
 	// 本編
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) != 1)
 	{
-		if (!flag)
+		if (flag == 0)		// ロードを行う
 		{
-			for (auto &th : ths)
-			{
-				th.join();
-			}
-			main_thre.join();
+			loadThread->Run(max, str, type);
+			loadMainThread->Run();
+
+			threadEndFlag = loadThread->Stop();
+			loadMainThread->SetThreadEndFlag(threadEndFlag);
+			flag = loadMainThread->Stop();
 		}
-		DrawGraph(0, 0, drawFile[0], false);
-		DrawGraph(320, 0, drawFile[1], false);
+		else if (flag == 1)		// ロードからシーンを移り変わる
+		{
+			draw = new Draw(loadThread->GetFile(0), loadThread->GetFile(1), loadThread->GetFile(2), loadThread->GetFile(3), loadThread->GetFile(4), loadThread->GetFile(5), loadThread->GetFile(6), loadThread->GetFile(7), loadThread->GetFile(8), loadThread->GetFile(9));
+			delete loadThread;
+			delete loadMainThread;
+
+			flag = 2;
+		}
+		else		// ロード後のシーン処理
+		{
+			draw->Process();
+		}
 	}
+
+	delete draw;
 
 	DxLib_End();
 	return 0;
-}
-
-
-// ファイルサイズを調べる
-UINT file_size(ifstream &fin) {
-	UINT pos = fin.tellg();//現在位置保存
-
-	UINT size = fin.seekg(0, ios::end).tellg();//最後にシークして位置取得→サイズ
-
-	fin.seekg(pos);//元の位置に戻す
-
-	return size;//サイズを返す
-}
-
-// ファイルの読み込み
-void MyLoadGraph(string path, int& name)
-{
-	std::lock_guard<std::mutex> lock(mtx);
-
-	vector<BYTE> data;  //ファイルデータ
-	UINT size;          //ファイルサイズ
-	int rad = 0x3434;
-	string outstr;
-
-	{//ファイルの読み込み
-
-		ifstream fin(path.c_str(), ios::binary);//ファイルオープン
-		
-		size = file_size(fin);//ファイルサイズ取得
-		data.resize(size);//メモリ確保
-		fin.read((char*)&data[0], size);//読み込み
-
-		fin.close();
-	}
-
-	{//解読
-		for (UINT i = 0; i < size; i++) {//全データループ
-			data[i] = (data[i] ^ rad);
-			if (i % 3 == 0)
-			{
-				data[i] = (data[i] ^ rad);
-			}
-			data[i] = ~data[i];
-			data[i] = (data[i] ^ rad);//排他的論理和を取る
-		}
-	}
-
-	{//保存
-		outstr = path;
-		outstr.append("del");
-		ofstream fout(outstr.c_str(), ios::binary);
-		fout.write((char*)&data[0], size);
-		fout.close();
-	}
-
-	name = LoadGraph(outstr.c_str());
-
-	std::remove(outstr.c_str());
-
-	endNum++;
-}
-
-// ロード画面の部分
-void Main_Thread(int draw)
-{
-	int test = 0;
-	do
-	{
-		test++;
-		ClearDrawScreen();
-		DrawGraph(test, 0, draw, false);
-		ScreenFlip();
-	} while (endNum < max);
-	flag = true;
 }
