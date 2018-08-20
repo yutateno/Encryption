@@ -28,7 +28,7 @@ Draw::Draw(int draw1, int draw2, int draw3, int draw4, int draw5, int draw6, int
 
 Draw::~Draw()
 {
-	DeleteGraph(draw10);
+	DeleteSoundMem(draw10);
 	DeleteGraph(draw9);
 	DeleteGraph(draw8);
 	DeleteGraph(draw7);
@@ -51,5 +51,5 @@ void Draw::Process()
 	DrawGraph(0, 288, draw7, false);
 	DrawGraph(320, 288, draw8, false);
 	DrawGraph(0, 470, draw9, false);
-	DrawGraph(320, 470, draw10, false);
+	PlaySoundMem(draw10, DX_PLAYTYPE_BACK, false);
 }

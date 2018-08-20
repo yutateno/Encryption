@@ -16,7 +16,7 @@ enum class ELOADFILE { graph, soundmem, mv1model };
 class MediaLoad
 {
 private:
-	static const int rad = 0x3434;						// 復号キー
+	static const int rad = 0x2546;						// 復号キー
 	static unsigned int file_size(std::ifstream &fin);	// ファイル読み込み
 
 public:

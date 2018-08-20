@@ -31,14 +31,8 @@ void MediaLoad::MyLoad(string path, int& file, ELOADFILE type)
 
 	// 解読
 	// 全データループ
-	for (UINT i = 0; i < size; i++)
+	for (UINT i = 0; i < size; i += 5)
 	{
-		data[i] = (data[i] ^ rad);
-		if (i % 3 == 0)
-		{
-			data[i] = (data[i] ^ rad);
-		}
-		data[i] = ~data[i];
 		data[i] = (data[i] ^ rad);
 	}
 

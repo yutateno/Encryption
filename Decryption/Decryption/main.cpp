@@ -26,11 +26,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	str[2] = "3.jyn";
 	str[3] = "4.jyn";
 	str[4] = "5.jyn";
-	str[5] = "6.jyn";
+	str[5] = "3.jyn";
 	str[6] = "1.jyn";
 	str[7] = "2.jyn";
 	str[8] = "3.jyn";
-	str[9] = "4.jyn";
+	str[9] = "6.wyn";
 
 	ELOADFILE type[max];		// ロードするファイルの形式
 	type[0] = ELOADFILE::graph;
@@ -42,7 +42,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	type[6] = ELOADFILE::graph;
 	type[7] = ELOADFILE::graph;
 	type[8] = ELOADFILE::graph;
-	type[9] = ELOADFILE::graph;
+	type[9] = ELOADFILE::soundmem;
 
 	int flag = 0;			// シーン移動を簡略的に行うための変数
 	bool threadEndFlag = false;

@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 	string path = argv[1];//入力ファイルパス
 	vector<BYTE> data;  //ファイルデータ
 	UINT size;          //ファイルサイズ
-	int rad = 0x3434;
+	int rad = 0x2546;
 
 	{//ファイルの読み込み
 		setlocale(LC_ALL, "japanese");//ロケール設定
@@ -44,14 +44,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	{//暗号化
-		for (UINT i = 0; i < size; i++) {//全データループ
+		for (UINT i = 0; i < size; i += 5) {//全データループ
 			data[i] = (data[i] ^ rad);//排他的論理和を取る
-			data[i] = ~data[i];
-			if (i % 3 == 0)
-			{
-				data[i] = (data[i] ^ rad);
-			}
-			data[i] = (data[i] ^ rad);
 		}
 	}
 
