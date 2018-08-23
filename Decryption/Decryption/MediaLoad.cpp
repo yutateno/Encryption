@@ -36,29 +36,34 @@ void MediaLoad::MyLoad(string path, int& file, ELOADFILE type)
 		data[i] = (data[i] ^ rad);
 	}
 
-	//保存
-	outstr = path;
-	outstr.append("del");
-	ofstream fout(outstr.c_str(), ios::binary);
-	fout.write((char*)&data[0], size);
-	fout.close();
+	if (type == ELOADFILE::mv1model)
+	{
+		//保存
+		outstr = path;
+		outstr.append("del");
+		ofstream fout(outstr.c_str(), ios::binary);
+		fout.write((char*)&data[0], size);
+		fout.close();
+	}
 
 	// ロードする
 	switch (type)
 	{
 	case ELOADFILE::graph:
-		file = LoadGraph(outstr.c_str());
+		file = CreateGraphFromMem((char*)&data[0], size);
 		break;
 	case ELOADFILE::soundmem:
-		file = LoadSoundMem(outstr.c_str());
+		file = LoadSoundMemByMemImage((char*)&data[0], size);
 		break;
 	case ELOADFILE::mv1model:
 		file = MV1LoadModel(outstr.c_str());
+
+		// 一時出力したものを削除
+		std::remove(outstr.c_str());
 		break;
 	default:
 		break;
 	}
 
-	// 一時出力したものを削除
-	std::remove(outstr.c_str());
+	
 }
