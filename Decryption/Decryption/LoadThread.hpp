@@ -19,7 +19,7 @@ public:
 
 	void Run(int max, std::string* path, ELOADFILE* type);		// 行う
 
-	int GetFile(int number);		// ロードしたものを渡す
+	std::vector<int> GetFile();		// ロードしたものを渡す
 
 	int num;
 };

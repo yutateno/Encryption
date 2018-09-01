@@ -10,7 +10,7 @@ private:
 public:
 	Draw();
 	Draw(int draw1, int draw2);
-	Draw(int draw1, int draw2, int draw3, int draw4, int draw5, int draw6, int draw7, int draw8, int draw9, int draw10);
+	Draw(std::vector<int> draw);
 	~Draw();
 
 	void Process();		// •`‰æ‚·‚é

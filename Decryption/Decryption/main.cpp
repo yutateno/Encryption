@@ -61,7 +61,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		else if (flag == 1)		// ロードからシーンを移り変わる
 		{
-			draw = new Draw(loadThread->GetFile(0), loadThread->GetFile(1), loadThread->GetFile(2), loadThread->GetFile(3), loadThread->GetFile(4), loadThread->GetFile(5), loadThread->GetFile(6), loadThread->GetFile(7), loadThread->GetFile(8), loadThread->GetFile(9));
+			draw = new Draw(loadThread->GetFile());
 			delete loadThread;
 
 			flag = 2;

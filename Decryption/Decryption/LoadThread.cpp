@@ -37,7 +37,7 @@ void LoadThread::Run(int max, std::string* path, ELOADFILE* type)
 	}
 }
 
-int LoadThread::GetFile(int number)
+vector<int> LoadThread::GetFile()
 {
-	return fileName[number];
+	return fileName;
 }

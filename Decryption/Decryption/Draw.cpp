@@ -12,18 +12,18 @@ Draw::Draw(int draw1, int draw2)
 	this->draw2 = draw2;
 }
 
-Draw::Draw(int draw1, int draw2, int draw3, int draw4, int draw5, int draw6, int draw7, int draw8, int draw9, int draw10)
+Draw::Draw(std::vector<int> draw)
 {
-	this->draw1 = draw1;
-	this->draw2 = draw2;
-	this->draw3 = draw3;
-	this->draw4 = draw4;
-	this->draw5 = draw5;
-	this->draw6 = draw6;
-	this->draw7 = draw7;
-	this->draw8 = draw8;
-	this->draw9 = draw9;
-	this->draw10 = draw10;
+	this->draw1 = draw[0];
+	this->draw2 = draw[1];
+	this->draw3 = draw[2];
+	this->draw4 = draw[3];
+	this->draw5 = draw[4];
+	this->draw6 = draw[5];
+	this->draw7 = draw[6];
+	this->draw8 = draw[7];
+	this->draw9 = draw[8];
+	this->draw10 = draw[9];
 }
 
 Draw::~Draw()
