@@ -11,21 +11,30 @@ void LoadThread::MyNextLoad(std::string path, int& file, ELOADFILE type)
 	MediaLoad::MyLoad(path, file, type);
 }
 
-void LoadThread::Run(int max, std::string* path, ELOADFILE* type)
+LoadThread::LoadThread()
 {
-	for (int i = 0; i != max; ++i)
-	{
-		ths.push_back(std::thread(&LoadThread::MyNextLoad, this, path[i], ref(fileName[i]), type[i]));
-	}
+	num = 0; 
+	maindraw = new LoadMainThread();
 }
 
-bool LoadThread::Stop()
+LoadThread::~LoadThread()
 {
-	for (auto &th : ths)
+	delete maindraw;
+}
+
+void LoadThread::Run(int max, std::string* path, ELOADFILE* type)
+{
+	if (num < max)
 	{
-		th.join();
+		fileName.push_back(0);
+		ths = std::thread(&LoadThread::MyNextLoad, this, path[num], ref(fileName[num]), type[num]);
+		ths.join();
+		num++;
+		ClearDrawScreen();
+		maindraw->Process(num);			// ÉçÅ[ÉhâÊñ 
+		ScreenFlip();
+		Run(max, path, type);
 	}
-	return true;
 }
 
 int LoadThread::GetFile(int number)

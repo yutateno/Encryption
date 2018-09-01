@@ -14,7 +14,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	setlocale(LC_ALL, "japanese");		// ロケール設定
 	
 	LoadThread* loadThread = new LoadThread();					// 非同期で行うロード処理
-	LoadMainThread* loadMainThread = new LoadMainThread();		// 非同期でメインで行うロード画面のようなものの処理
 
 	Draw* draw = NULL;			// ロード後にロードしたファイルを渡す先
 
@@ -55,17 +54,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		if (flag == 0)		// ロードを行う
 		{
 			loadThread->Run(max, str, type);
-			loadMainThread->Run();
-
-			threadEndFlag = loadThread->Stop();
-			loadMainThread->SetThreadEndFlag(threadEndFlag);
-			flag = loadMainThread->Stop();
+			if (loadThread->num >= 10)
+			{
+				flag = 1;
+			}
 		}
 		else if (flag == 1)		// ロードからシーンを移り変わる
 		{
 			draw = new Draw(loadThread->GetFile(0), loadThread->GetFile(1), loadThread->GetFile(2), loadThread->GetFile(3), loadThread->GetFile(4), loadThread->GetFile(5), loadThread->GetFile(6), loadThread->GetFile(7), loadThread->GetFile(8), loadThread->GetFile(9));
 			delete loadThread;
-			delete loadMainThread;
 
 			flag = 2;
 		}

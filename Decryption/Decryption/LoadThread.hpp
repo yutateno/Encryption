@@ -1,22 +1,25 @@
 #pragma once
 #include "MediaLoad.hpp"
+#include "LoadMainThread.hpp"
 
 // 非同期を行う
-class LoadThread : public MediaLoad
+class LoadThread
 {
 private:
-	std::vector<std::thread>ths;		// 非同期を行うだけ
-	int fileName[30];
+	std::thread ths;		// 非同期を行うだけ
+	std::vector<int> fileName;
+
+	LoadMainThread* maindraw;
 
 	void MyNextLoad(std::string path, int& file, ELOADFILE type);		// 非同期を行うメソッド
 
 public:
-	LoadThread() {};
-	~LoadThread() {};
+	LoadThread();
+	~LoadThread();
 
 	void Run(int max, std::string* path, ELOADFILE* type);		// 行う
 
-	bool Stop();		// 終了を調べる
-
 	int GetFile(int number);		// ロードしたものを渡す
+
+	int num;
 };
