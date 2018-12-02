@@ -5,17 +5,16 @@
 
 using namespace std;
 
-//typedef宣言
 typedef unsigned char BYTE;
 typedef unsigned int UINT;
 
-//ファイルサイズを返す
+// ファイルサイズを返す
 UINT file_size(ifstream &fin);
 
-//メイン関数
+
 int main(int argc, char *argv[])
 {
-
+	// ドラッグアンドドロップでない起動の時
 	if (argc < 2)
 	{
 		cout << "ファイルをドラッグドロップしてください" << endl;
@@ -23,55 +22,76 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	string path = argv[1];//入力ファイルパス
-	vector<BYTE> data;  //ファイルデータ
-	UINT size;          //ファイルサイズ
+	// 入力ファイルパス
+	string path = argv[1];
+
+	// ファイルデータ
+	vector<BYTE> data;
+
+	// ファイルサイズ
+	UINT size;
+
+	// 暗号キー
 	int rad = 0x2546;
 
-	//ファイルの読み込み
-	setlocale(LC_ALL, "japanese");//ロケール設定
+	// ロケール設定
+	setlocale(LC_ALL, "japanese");
 
-	ifstream fin(path.c_str(), ios::binary);//ファイルオープン
 
-	if (fin.fail()) {
-		return -1; //ファイル読み込みエラー
-	}
+	/// ファイルの読み込み---------------------------------
 
-	size = file_size(fin);//ファイルサイズ取得
-	data.resize(size);//メモリ確保
-	fin.read((char*)&data[0], size);//読み込み
+	// ファイルオープン
+	ifstream fin(path.c_str(), ios::binary);
 
+	if (fin.fail()) return -1; // ファイル読み込みエラー
+
+	// ファイルサイズ取得
+	size = file_size(fin);
+
+	// メモリ確保
+	data.resize(size);
+
+	// 読み込み
+	fin.read((char*)&data[0], size);
+
+	// ファイルクローズ
 	fin.close();
 	
 
-	//暗号化
-	for (UINT i = 0; i < size; i += 5) {//全データループ
-		data[i] = (data[i] ^ rad);//排他的論理和を取る
+	/// 暗号化--------------------------------------------------
+
+	// 全データループ
+	for (UINT i = 0; i < size; i += 5)
+	{
+		data[i] = (data[i] ^ rad);	// 排他的論理和を取る
 	}
 	
-	//保存
+	/// 保存------------------------------------------------------
+
+	// ファイルパスの仮置き
 	string outstr = path;
-	outstr.erase(outstr.end() - 2, outstr.end());
-	outstr.append("yn");
-	ofstream fout(outstr.c_str(), ios::binary);
-	fout.write((char*)&data[0], size);
-	fout.close();
+
+	outstr.erase(outstr.end() - 2, outstr.end());	// 拡張子の後ろ2つを変更するため削除
+	outstr.append("yn");							// 自分用に拡張子を作成
+	ofstream fout(outstr.c_str(), ios::binary);		// バイナリデータとして書き込むよう設定
+	fout.write((char*)&data[0], size);				// 書き込み
+	fout.close();									// ファイルをクローズ
 	
-	printf("暗号化完了");
-	getchar();
+	printf("暗号化完了");			// 確認用表示
+	getchar();						// 入力待ち
 
 	return 0;
 
 }
 
-//ファイルサイズを返す
+// ファイルサイズを返す
 UINT file_size(ifstream &fin)
 {
-	UINT pos = fin.tellg();//現在位置保存
+	UINT pos = fin.tellg();		// 現在位置保存
 
-	UINT size = fin.seekg(0, ios::end).tellg();//最後にシークして位置取得→サイズ
+	UINT size = fin.seekg(0, ios::end).tellg();		// 最後にシークして位置取得→サイズ
 
-	fin.seekg(pos);//元の位置に戻す
+	fin.seekg(pos);		// 元の位置に戻す
 
-	return size;//サイズを返す
+	return size;	// サイズを返す
 }
