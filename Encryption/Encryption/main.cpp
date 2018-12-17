@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
 	// ドラッグアンドドロップでない起動の時
 	if (argc < 2)
 	{
-		cout << "ファイルをドラッグドロップしてください" << endl;
-		getchar();
+		cerr << "ファイルをドラッグドロップしてください" << endl;
+		int charTemp = getchar();
 		return -1;
 	}
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	fout.close();									// ファイルをクローズ
 	
 	printf("暗号化完了");			// 確認用表示
-	getchar();						// 入力待ち
+	int charTemp = getchar();						// 入力待ち
 
 	return 0;
 
